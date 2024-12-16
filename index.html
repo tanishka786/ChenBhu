@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Upload with Theme Toggle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        .response {
+            margin-top: 20px;
+            color: var(--text-color);
+        }
+
+        .toggle-switch {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .toggle-switch label {
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            transition: all 0.3s;
+        }
+
+        .toggle-switch input:checked + label {
+            background-color: var(--button-hover-bg);
+            color: var(--button-text-dark);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="toggle-switch">
+        <span>Light / Dark Mode</span>
+        <input type="checkbox" id="themeToggle">
+        <label for="themeToggle">🌙</label>
+    </div>
+    <h1>Upload Audio to IPFS and Smart Contract</h1>
+    <form id="audioForm">
+        <label for="audioFile">Choose Audio File:</label>
+        <input type="file" id="audioFile" name="audioFile" accept="audio/*" required>
+        <button type="submit">Upload</button>
+    </form>
+    <div class="response" id="response"></div>
+</div>
+
+<script>
+    async function uploadToIPFS(file) {
+        const ipfs = window.IpfsHttpClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+
+        const result = await ipfs.add({ content: file });
+        return result.path;
+    }
+
+    async function uploadAudio(event) {
+        event.preventDefault();
+
+        const audioFile = document.getElementById('audioFile').files[0];
+        if (!audioFile) return;
+
+        try {
+            const ipfsHash = await uploadToIPFS(audioFile);
+
+            // Interact with the smart contract using ethers.js
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(
+                'YOUR_CONTRACT_ADDRESS', // Replace with deployed contract address
+                ['function uploadAudio(string memory) public'], // ABI for uploadAudio function
+                signer
+            );
+
+            await contract.uploadAudio(ipfsHash);
+            document.getElementById('response').innerHTML = `Audio uploaded successfully! IPFS Hash: ${ipfsHash}`;
+        } catch (error) {
+            console.error("Error uploading audio:", error);
+            document.getElementById('response').innerHTML = "Error uploading audio.";
+        }
+    }
+
+    document.getElementById('audioForm').addEventListener('submit', uploadAudio);
+
+    // Toggle theme
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+            document.documentElement.style.setProperty('--background-color', '#1a1a1a');
+            document.documentElement.style.setProperty('--text-color', '#f0f0f0');
+            document.documentElement.style.setProperty('--container-bg', '#2e2e2e');
+            document.documentElement.style.setProperty('--border-color', '#444');
+            document.documentElement.style.setProperty('--button-bg', '#007bff');
+            document.documentElement.style.setProperty('--button-text', '#fff');
+            document.documentElement.style.setProperty('--button-hover-bg', '#0056b3');
+            document.documentElement.style.setProperty('--button-text-dark', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--background-color', '#f0f2f5');
+            document.documentElement.style.setProperty('--text-color', '#333');
+            document.documentElement.style.setProperty('--container-bg', '#fff');
+            document.documentElement.style.setProperty('--border-color', '#ccc');
+            document.documentElement.style.setProperty('--button-bg', '#007bff');
+            document.documentElement.style.setProperty('--button-text', '#fff');
+            document.documentElement.style.setProperty('--button-hover-bg', '#0056b3');
+            document.documentElement.style.setProperty('--button-text-dark', '#333');
+        }
+    });
+</script>
+
+</body>
+</html>
