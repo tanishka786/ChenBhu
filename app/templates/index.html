@@ -1,191 +1,186 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <style type="text/css">
-  .navbar-item:hover {
-    background-color: #b9293c;
+  body {
+    transition: background-color 0.5s, color 0.5s;
+    font-family: 'Arial', sans-serif;
   }
 
-  .left {
-    float: left;
+  .dark-mode {
+    background-color: #1e1e2f !important;
+    color: #f5f5f5 !important;
   }
 
-  .right {
-    float: right;
+  .light-mode {
+    background-color: #f8f9fa !important;
+    color: #343a40 !important;
   }
 
-  /* Title, subtitle, and horizontal line. */
-  .title {
-    margin-top: 9rem;
-    text-align: center;
-    line-height: 1.6rem;
+  .btn-toggle {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
   }
 
-  .title-text {
-    font-family:'Courier New', Courier, monospace;
-    font-size: 5rem;
+  .btn-toggle:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
   }
 
-  .subtitle-text {
-    font-size: 2.9rem;
+  .container-fluid {
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
 
-  .hr {
-    border-style: solid;
-    border-width: 0.08rem;
-    border-color: #8d7f7f;
-    width: 55rem;
+  .card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  /* Buttons, post text area, name input, and body styling. */
-  .content {
-    min-height: 100%;
-    height: 100%;
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .alert-primary {
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+
+  .form-control {
+    font-size: 1.2rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+  }
+
+  .btn {
+    font-size: 1.1rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
   }
 
   .btn:hover {
-    background-color: #b92948;
-    cursor: pointer;
+    background-color: #0069d9;
+    color: #fff;
   }
 
-  .post-textarea,
-  .name-input {
-    font-family:'Courier New', Courier, monospace;
-    font-size: 1.8rem;
-    padding: 1.2rem;
-    border-radius: 0.4rem;
-    border-width: 0.1rem;
-    border-style: solid;
-    border-color: #000303;
-  }
-
-  .request_tx {
-    margin: 2.5rem 2.5rem 14rem 2.5rem;
-  }
- 
-  
-  /* Post boxes styling */
   .post_box {
-    background: rgb(131, 251, 245);
-    padding: 1.2rem 0 0 1.2rem;
-    margin-top: 0;
-    margin-bottom: 0.8rem;
-    border: 0.1rem solid #7f8c8d;
+    background: linear-gradient(145deg, #e0f7fa, #b2ebf2);
+    border-radius: 0.8rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
   }
 
-  .post_box-header {
-    padding-bottom: 1.2rem;
-    font-size: 1.4rem;
+  .post_box:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
   }
 
   .post_box-avatar {
-    width: 3.8rem;
-    height: 3.8rem;
+    width: 4rem;
+    height: 4rem;
     border-radius: 50%;
+    background-color: #007bff;
+    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
-    font-size: 2.2rem;
-    float: left;
-    margin-right: 1.6rem;
-    border: 0.1rem solid #fff;
-    box-shadow: 0 0 0 0.2rem #f00;
-  }
-
-  .post_box-avatar::after {
-    content: "";
-    display: block;
-  }
-
-  .post_box-name {
+    font-size: 1.5rem;
     font-weight: bold;
+    margin-right: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
-  .post_box-subtitle {
-    color: #777;
+  .post_box-header {
+    display: flex;
+    align-items: center;
   }
 
   .post_box-body {
-    margin-top: 1.6rem;
-    margin-bottom: 0.8rem;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    margin-top: 1rem;
   }
 
-  .post_box-options {
-    float: right;
-  }
-
-  .option-btn {
-    background: #f8f8f8;
-    border: none;
-    color: #502c2c;
-    padding: 0.7rem;
-    cursor: pointer;
-    font-size: 1.4rem;
-    margin-left: 0.2rem;
-    margin-right: 0.2rem;
-    outline: none;
-    height: 4.2rem;
+  .name-header {
+    font-weight: bold;
+    font-size: 1.3rem;
   }
 </style>
-<div class="container-fluid">
-  <div class="row" style="padding-top: 10px">
-    <div class="col-sm-4" style="">
-      <h2 class="text-center alert alert-primary">Upload a File</h2>
-      <form action="/submit" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-          <label>User Name:</label>
-          <input
-            type="text"
-            class="form-control"
-            name="user"
-            placeholder="Enter Your Name"
-          />
-        </div>
 
-        <div class="form-group">
-          <label for="exampleFormControlTextarea1">Upload a File:</label>
-          <input
-            type="file"
-            id="fileUpld"
-            name="v_file"
-            accept=".*"
-          />
-        </div>
-        <button type="submit" class="btn btn-primary mb-2">Upload</button>
-      </form>
+<button class="btn-toggle" id="toggleMode">Toggle Mode</button>
+
+<div class="container-fluid light-mode" id="mainContainer">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="card">
+        <h2 class="text-center alert alert-primary">Upload a File</h2>
+        <form action="/submit" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label>User Name:</label>
+            <input type="text" class="form-control" name="user" placeholder="Enter Your Name" />
+          </div>
+
+          <div class="form-group">
+            <label>Upload a File:</label>
+            <input type="file" id="fileUpld" name="v_file" accept=".*" />
+          </div>
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+      </div>
     </div>
 
     <div class="col-sm-7">
-      <h2 class="text-center alert alert-primary">Uploaded Files</h2>
-      {% for post in request_tx %}
-      <div class="post_box">
-        <div class="post_box-header">
-          <div
-            style="
-              background: rgb(219, 52, 52) none repeat scroll 0% 0%;
-              box-shadow: rgb(0, 4, 6) 0 0 0 0.2rem;
-            "
-            class="post_box-avatar"
-          >
-            {{post.user[0]}}
+      <div class="card">
+        <h2 class="text-center alert alert-primary">Uploaded Files</h2>
+        {% for post in request_tx %}
+        <div class="post_box">
+          <div class="post_box-header">
+            <div class="post_box-avatar">{{post.user[0]}}</div>
+            <div class="name-header">{{post.user}}</div>
           </div>
-          <div class="name-header">{{post.user}}</div>
-        </div>
-        <div>
           <div class="post_box-body">
             <p>
-              {{post.v_file}}&#x2192<a href="{{url_for('download_file',variable = post.v_file)}}"
-                >Download</a
-              >
+              {{post.v_file}} &#x2192
+              <a href="{{url_for('download_file', variable=post.v_file)}}">Download</a>
             </p>
           </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
-
-    <div class="col-sm-1"></div>
   </div>
 </div>
+
+<script>
+  const toggleButton = document.getElementById('toggleMode');
+  const mainContainer = document.getElementById('mainContainer');
+
+  toggleButton.addEventListener('click', () => {
+    if (mainContainer.classList.contains('light-mode')) {
+      mainContainer.classList.replace('light-mode', 'dark-mode');
+    } else {
+      mainContainer.classList.replace('dark-mode', 'light-mode');
+    }
+  });
+</script>
 
 {% endblock %}
