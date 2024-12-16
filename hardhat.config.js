@@ -1,11 +1,14 @@
 require("@nomicfoundation/hardhat-toolbox");
 
 module.exports = {
-    solidity: "0.8.0",
+        solidity: {
+          version: "0.8.28", // Ensure this matches your contract's pragma version
+        },
+    
     networks: {
-        goerli: {
-            url: "YOUR_INFURA_GOERLI_RPC_URL",
-            accounts: ["YOUR_PRIVATE_KEY"]
+        testnet: {
+            url: "HTTP://127.0.0.1:7545",
+            accounts: ["0x8346c4c9805ebb5325ceddd852d6fd0b67d4f89f5cd2303860ad282f85fd53e2"]
         }
     }
 };
